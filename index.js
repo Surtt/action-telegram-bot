@@ -1,7 +1,5 @@
-let nodePath = process.argv[0];
-let appPath = process.argv[1];
-let firstNum = process.argv[2];
-let secondNum = process.argv[3];
+const firstNum = process.argv[2];
+const secondNum = process.argv[3];
 const operation = process.argv[4];
 
 switch (operation) {
