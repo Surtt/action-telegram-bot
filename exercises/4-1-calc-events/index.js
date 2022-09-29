@@ -30,27 +30,5 @@ myEmitter.on('division', (a, b) => {
   myEmitter.emit('result', console.log(firstNum / secondNum));
 });
 
-switch (operation) {
-  case 'add': {
-    myEmitter.emit('add', firstNum, secondNum);
-    myEmitter.on('result', (result) => result);
-    break;
-  }
-  case 'multiply': {
-    myEmitter.emit('multiply', firstNum, secondNum);
-    myEmitter.on('result', (result) => result);
-    break;
-  }
-  case 'subtraction': {
-    myEmitter.emit('subtraction', firstNum, secondNum);
-    myEmitter.on('result', (result) => result);
-    break;
-  }
-  case 'division': {
-    myEmitter.emit('division', firstNum, secondNum);
-    myEmitter.on('result', (result) => result);
-    break;
-  }
-  default:
-    return operation;
-}
+myEmitter.emit(operation, firstNum, secondNum);
+myEmitter.on('result', (result) => result);
