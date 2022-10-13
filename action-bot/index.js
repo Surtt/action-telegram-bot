@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 class App {
   async init() {
-    console.log(process.env)
     const token = process.env.TOKEN;
 
     if (!token) {
