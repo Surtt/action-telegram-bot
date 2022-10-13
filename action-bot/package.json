@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@prisma/client": "^4.4.0",
+    "dotenv": "^16.0.3",
+    "telegraf": "^4.10.0",
+    "telegraf-session-local": "^2.1.0"
+  },
+  "name": "action-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^18.8.3"
+  }
+}
