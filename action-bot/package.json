@@ -7,10 +7,13 @@
   },
   "name": "action-bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "prisma": {
+    "seed": "node build/prisma/seed.js"
+  },
+  "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
