@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 interface IUser {
   name: string;
   city: string;
+  userId: number;
 }
 
 interface IAction {
@@ -15,6 +16,7 @@ interface IAction {
 const user: IUser = {
   name: 'Alex',
   city: 'Espoo',
+  userId: 12345678,
 }
 
 const action: IAction = {
