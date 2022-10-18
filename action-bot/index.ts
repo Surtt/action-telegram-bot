@@ -20,10 +20,8 @@ class App {
 
     bot.launch();
     await prisma.$connect();
-    const allUsers = await prisma.user.findMany({ where: { id: { gte: 1 } }});
-    const allActions = await prisma.action.findMany({ where: { id: { gte: 1 } }})
-    console.log(allUsers)
-    console.log(allActions)
+    await prisma.user.findMany({ where: { id: { gte: 1 } }});
+    await prisma.action.findMany({ where: { id: { gte: 1 } }})
   }
 }
 

@@ -2,14 +2,14 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-interface IUser {
-  name: string;
-  city: string;
-}
-
 interface IAction {
   name: string;
   field: string;
+}
+
+interface IUser {
+  name: string;
+  city: string;
 }
 
 const user: IUser = {
@@ -29,12 +29,4 @@ const main = async () => {
   await prisma.$disconnect();
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  });
+main();
