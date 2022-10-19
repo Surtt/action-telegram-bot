@@ -3,21 +3,22 @@ import { PrismaClient } from '@prisma/client';
 import {Markup, Scenes, Telegraf, Context } from "telegraf";
 import LocalSession from 'telegraf-session-local';
 
-interface MySessionScene extends Scenes.SceneSessionData {
-  myProps: string;
+interface MySceneSession extends Scenes.SceneSessionData {
+  mySceneSessionProp: string;
 }
 
-interface MySession extends Scenes.SceneSession<MySessionScene> {
-  myProp: string;
-  myData: {
-    preferenceType?: string,
-  };
+interface MySession extends Scenes.SceneSession<MySceneSession> {
+  mySessionProp: string;
 }
 
 interface MyContext extends Context {
-  props: string;
+  // will be available under `ctx.myContextProp`
+  myContextProp: string;
+
+  // declare session type
   session: MySession;
-  scene: Scenes.SceneContextScene<MyContext, MySessionScene>;
+  // declare scene type
+  scene: Scenes.SceneContextScene<MyContext, MySceneSession>;
 }
 
 const prisma = new PrismaClient();
@@ -31,95 +32,65 @@ class App {
       throw new Error('Не задан токен');
     }
 
-    const scenarioTypeScene = new Scenes.BaseScene<MyContext>('SCENARIO_TYPE_SCENE_ID');
-
-    scenarioTypeScene.enter((ctx) => {
-      ctx.session.myData = {};
-      ctx.reply('What is your drug?', Markup.keyboard(['Movie', 'Theater']));
+    const greeterScene = new Scenes.BaseScene<MyContext>("greeter");
+    greeterScene.enter( (ctx) => {
+      ctx.reply(`Добрый день, ${ctx?.message?.from.first_name}!`)
+      return ctx.scene.enter('city');
     });
 
-    scenarioTypeScene.action("Theater", (ctx) => {
-      ctx.reply('You choose theater');
-      ctx.session.myData.preferenceType = 'Theater';
-      return ctx.scene.enter('SOME_OTHER_SCENE_ID'); // switch to some other scene
+    const cityScene = new Scenes.BaseScene<MyContext>('city');
+    cityScene.enter((ctx) => {
+      ctx.reply('Укажите, пожалуйста, свой город');
     });
 
-    scenarioTypeScene.action('Movie', (ctx) => {
-      ctx.reply('You choose movie, your loss');
-      ctx.session.myData.preferenceType = 'Movie';
-      return ctx.scene.leave(); // exit global namespace
+    cityScene.on('text', async (ctx) => {
+      const name = ctx.message.from.first_name;
+      const city = ctx.message.text;
+      const userId = ctx.from.id;
+
+      if (!userId) {
+        await prisma.user.create({
+          data: {
+            name,
+            city,
+            userId,
+          }
+        });
+      } else {
+        return ctx.scene.enter('categories');
+      }
     });
 
-    scenarioTypeScene.leave((ctx) => {
-      ctx.reply('Thank you for your time!');
+    const categoriesScene = new Scenes.BaseScene<MyContext>('categories');
+    categoriesScene.enter((ctx) => {
+      ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard([['Курсы', 'Одежда'], ['Электроника', 'Продукты']]).oneTime().resize());
     });
-
-// What to do if user entered a raw message or picked some other option?
-    scenarioTypeScene.use((ctx) => ctx.replyWithMarkdown('Please choose either Movie or Theater'));
 
     const bot = new Telegraf<MyContext>(token);
 
-    const testScene = new Scenes.BaseScene<MyContext>('test');
-    testScene.enter((ctx) => ctx.reply('Привет!'));
-    testScene.command('back', leave<MyContext>());
-    testScene.on('text', (ctx) => ctx.reply(ctx.message.text));
-
-    testScene.leave((ctx) => ctx.reply('Пока!'));
-
-    const stage = new Scenes.Stage<MyContext>([scenarioTypeScene, testScene])
+    const stage = new Scenes.Stage<MyContext>([greeterScene, cityScene, categoriesScene]);
 
     bot.use(new LocalSession({database: 'session.json'}).middleware());
     bot.use(stage.middleware());
     bot.use((ctx, next) => {
-      ctx.session.myData.preferenceType;
-      // ctx.session.myProp;
-      ctx.scene.session.myProps;
-      next();
+      ctx.session.mySessionProp;
+      ctx.scene.session.mySceneSessionProp;
+      return next();
     });
+    bot.command("start", ctx => ctx.scene.enter("greeter"));
+    bot.command("echo", ctx => ctx.scene.enter("echo"));
+    bot.command("city", ctx => ctx.scene.enter("city"));
+    bot.on("message", ctx => ctx.reply("Такой команды нет, попробуй /start"));
 
-    bot.command('123', (ctx) => ctx.scene.enter('SCENARIO_TYPE_SCENE_ID'));
-    bot.command('test', (ctx) => ctx.scene.enter('test'));
-
-    // bot.command('/start', (ctx) => {
-    //   const userName = ctx.message.from.first_name;
-    //   ctx.reply(`Привет ${userName}!`);
-    //   ctx.reply(`Напиши город`);
-    // });
-    //
-    // bot.on('text', async (ctx) => {
-    //   const userName = ctx.message.from.first_name;
-    //   const userCity = ctx.message.text;
-    //   const userId = ctx.from.id;
-    //   const user = await prisma.user.findUnique({
-    //     where: {
-    //       userId,
-    //     }
-    //   })
-    //   console.log(user);
-    //   console.log(userCity);
-    //   console.log(userName);
-    //   // TODO добавить в schema.prisma id (ctx.from.id - number) чата и потом проверять на существование этого пользователя
-    //   if (!user) {
-    //     await prisma.user.create({
-    //       data: {
-    //         name: userName,
-    //         city: userCity,
-    //         userId,
-    //       }
-    //     });
-    //   } else {
-    //     console.log(userId);
-    //     return;
-    //   }
-    // });
-
-
+    bot.command('action', (ctx) => {
+      ctx.reply('test', Markup.keyboard(['Курсы', 'Одежда', 'Электроника', 'Продукты']).oneTime().resize());
+    });
     bot.launch();
     await prisma.$connect();
     const allUsers = await prisma.user.findMany({ where: { id: { gte: 1 } }});
-    const allActions = await prisma.action.findMany({ where: { id: { gte: 1 } }})
+    // const allActions = await prisma.action.findMany({ where: { id: { gte: 1 } }})
     console.log(allUsers)
-    console.log(allActions)
+    // console.log(allActions)
   }
 }
 

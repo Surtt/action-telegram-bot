@@ -4,9 +4,10 @@
       "id": "344268972:344268972",
       "data": {
         "__scenes": {
-          "current": "test",
+          "current": "categories",
           "state": {}
-        }
+        },
+        "mySessionProp": 0
       }
     }
   ]

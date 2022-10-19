@@ -3,25 +3,49 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 interface IUser {
+  userId: number;
   name: string;
   city: string;
-  userId: number;
+  categories: string[];
+  actions: IAction[];
 }
 
 interface IAction {
-  name: string;
+  title: string;
+  text: string;
+  startDay: string;
+  endDay: string;
+  city: string;
+  tags: string[];
   field: string;
 }
 
 const user: IUser = {
+  userId: 12345678,
   name: 'Alex',
   city: 'Espoo',
-  userId: 12345678,
+  categories: ['Курсы', 'Одежда'],
+  actions: [
+    {
+      title: 'React',
+      text: 'Прекрасный курс по React',
+      startDay: '12.10.2022',
+      endDay: '12.11.2022',
+      city: 'Москва',
+      tags: ['Курсы', 'React'],
+      field: 'Курсы',
+    }
+  ],
 }
 
 const action: IAction = {
-    name: 'React',
-    field: 'Курсы',
+  title: 'React',
+  text: 'Прекрасный курс по React',
+  startDay: '12.10.2022',
+  endDay: '12.11.2022',
+  city: 'Москва',
+  tags: ['Курсы', 'React'],
+  field: 'Курсы',
 };
 
 const main = async () => {
