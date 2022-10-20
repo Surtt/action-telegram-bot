@@ -26,7 +26,7 @@ model Action {
   endDay    DateTime
   city      String
   tags      String[]
-  field     String
+  category  String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   User      User?    @relation(fields: [userId], references: [id])

@@ -17,7 +17,7 @@ interface IAction {
   endDay: string;
   city: string;
   tags: string[];
-  field: string;
+  category: string;
 }
 
 const user: IUser = {
@@ -33,7 +33,7 @@ const user: IUser = {
       endDay: '12.11.2022',
       city: 'Москва',
       tags: ['Курсы', 'React'],
-      field: 'Курсы',
+      category: 'Курсы',
     }
   ],
 }
@@ -45,7 +45,7 @@ const action: IAction = {
   endDay: '12.11.2022',
   city: 'Москва',
   tags: ['Курсы', 'React'],
-  field: 'Курсы',
+  category: 'Курсы',
 };
 
 const main = async () => {
