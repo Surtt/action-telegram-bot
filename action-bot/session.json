@@ -7,7 +7,9 @@
           "current": "categories",
           "state": {}
         },
-        "mySessionProp": 0
+        "mySessionProp": "Химки",
+        "cityProp": "Москва",
+        "userProp": 344268972
       }
     }
   ]

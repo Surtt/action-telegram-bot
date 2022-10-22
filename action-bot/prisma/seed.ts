@@ -7,14 +7,13 @@ interface IUser {
   name: string;
   city: string;
   categories: string[];
-  actions: IAction[];
 }
 
 interface IAction {
   title: string;
   text: string;
-  startDay: string;
-  endDay: string;
+  startDay: Date;
+  endDay: Date;
   city: string;
   tags: string[];
   category: string;
@@ -24,25 +23,14 @@ const user: IUser = {
   userId: 12345678,
   name: 'Alex',
   city: 'Espoo',
-  categories: ['Курсы', 'Одежда'],
-  actions: [
-    {
-      title: 'React',
-      text: 'Прекрасный курс по React',
-      startDay: '12.10.2022',
-      endDay: '12.11.2022',
-      city: 'Москва',
-      tags: ['Курсы', 'React'],
-      category: 'Курсы',
-    }
-  ],
+  categories: [],
 }
 
 const action: IAction = {
   title: 'React',
   text: 'Прекрасный курс по React',
-  startDay: '12.10.2022',
-  endDay: '12.11.2022',
+  startDay: new Date(),
+  endDay: new Date(),
   city: 'Москва',
   tags: ['Курсы', 'React'],
   category: 'Курсы',
