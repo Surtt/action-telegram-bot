@@ -75,7 +75,7 @@ class App {
       await ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard(filteredButtons).oneTime().resize());
     });
 
-    // TODO add more actions in seed file and change schema's start and end day
+    // TODO refactoring - create functions
     categoriesScene.hears('Курсы', async (ctx) => {
       const category = ctx.update.message.text;
       const city = ctx.session.cityProp;
