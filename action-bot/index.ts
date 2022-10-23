@@ -37,30 +37,45 @@ class App {
     });
 
     const cityScene = new Scenes.BaseScene<MyContext>('city');
-    cityScene.enter((ctx) => {
-      ctx.reply('Укажите, пожалуйста, свой город');
+    cityScene.enter(async (ctx) => {
+      const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
+      if (!user) {
+        await ctx.reply('Укажите, пожалуйста, свой город');
+      } else {
+        return await ctx.scene.enter('categories');
+      }
     });
 
     cityScene.on('text', async (ctx) => {
       const name = ctx.message.from.first_name;
       const city = ctx.message.text;
       const userId = ctx.from.id;
-      await prisma.user.create({
-        data: {
-          name,
-          city,
-          userId,
-        }
-      });
-      ctx.session.cityProp = city;
-      return await ctx.scene.enter('categories');
+      const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
+      if (!user) {
+        await prisma.user.create({
+          data: {
+            name,
+            city,
+            userId,
+          }
+        });
+        ctx.session.cityProp = city;
+        return await ctx.scene.enter('categories');
+      } else {
+        return await ctx.scene.enter('categories');
+      }
     });
 
     const categoriesScene = new Scenes.BaseScene<MyContext>('categories');
     categoriesScene.enter(async (ctx) => {
-      await ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard([['Курсы', 'Одежда'], ['Электроника', 'Продукты']]).oneTime().resize());
+      const buttons = ['Курсы', 'Одежда', 'Электроника', 'Продукты'];
+      const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
+
+      const filteredButtons = buttons.filter((button) => button && !user?.categories.includes(button));
+      await ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard(filteredButtons).oneTime().resize());
     });
 
+    // TODO add more actions in seed file and change schema's start and end day
     categoriesScene.hears('Курсы', async (ctx) => {
       const category = ctx.update.message.text;
       const city = ctx.session.cityProp;
