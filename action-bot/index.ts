@@ -10,7 +10,6 @@ import {categoriesScene} from "./scenes/categoriesScene.js";
 const prisma = new PrismaClient();
 const {leave, enter} = Scenes.Stage;
 
-
 const init = async () => {
   const token = process.env.TOKEN;
 
