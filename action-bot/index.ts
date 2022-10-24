@@ -75,7 +75,7 @@ class App {
       await ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard(filteredButtons).oneTime().resize());
     });
 
-    // TODO refactoring - create functions
+    // TODO refactoring - create functions, hears for different buttons
     categoriesScene.hears('Курсы', async (ctx) => {
       const category = ctx.update.message.text;
       const city = ctx.session.cityProp;
@@ -95,6 +95,8 @@ class App {
             <b>🏁 Дата начала акции:</b> ${action.startDay.toLocaleDateString('ru-RU')}
             
             <b>🏁 Дата окончания акции:</b> ${action.endDay.toLocaleDateString('ru-RU')}
+            
+            <b>🏷 Теги:</b> ${action.tags.map((t) => `#${t}`).join(' ')}
             `);
       })
     });
