@@ -1,11 +1,12 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import {Markup, Scenes, Telegraf, Context } from "telegraf";
+import { Scenes, Telegraf } from "telegraf";
 import LocalSession from 'telegraf-session-local';
-import {MyContext} from "./types";
-import {greeterScene} from "./scenes/greeterScene.js";
-import {cityScene} from "./scenes/cityScene.js";
-import {categoriesScene} from "./scenes/categoriesScene.js";
+import { MyContext } from "./types";
+import { greeterScene } from "./scenes/greeterScene.js";
+import { cityScene } from "./scenes/cityScene.js";
+import { categoriesScene } from "./scenes/categoriesScene.js";
+import { changeCityScene } from "./scenes/changeCityScene.js";
 
 const prisma = new PrismaClient();
 const {leave, enter} = Scenes.Stage;
@@ -19,7 +20,7 @@ const init = async () => {
 
   const bot = new Telegraf<MyContext>(token);
 
-  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(), categoriesScene()]);
+  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(), categoriesScene(), changeCityScene()]);
 
   bot.use(new LocalSession({database: 'session.json'}).middleware());
   bot.use(stage.middleware());
@@ -31,7 +32,7 @@ const init = async () => {
     return next();
   });
   bot.command("start", ctx => ctx.scene.enter("greeter"));
-  bot.command("city", ctx => ctx.scene.enter("city"));
+  bot.command("city", ctx => ctx.scene.enter("changeCity"));
   bot.on("message", ctx => ctx.reply("Такой команды нет, попробуй /start"));
 
   bot.launch();
