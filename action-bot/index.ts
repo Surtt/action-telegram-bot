@@ -1,17 +1,17 @@
 import 'dotenv/config';
-import { PrismaClient } from '@prisma/client';
 import {Markup, Scenes, Telegraf, Context } from "telegraf";
 import LocalSession from 'telegraf-session-local';
 import {MyContext} from "./types";
-import {greeterScene} from "./scenes/greeterScene.js";
-import {cityScene} from "./scenes/cityScene.js";
-import {categoriesScene} from "./scenes/categoriesScene.js";
+import {greeterScene} from "./scenes/greeter-scene.js";
+import {cityScene} from "./scenes/city-scene.js";
+import {categoriesScene} from "./scenes/categories-scene.js";
+import {getPrismaClient} from "./helpers/get-prisma-client.js";
 
-const prisma = new PrismaClient();
 const {leave, enter} = Scenes.Stage;
 
 const init = async () => {
   const token = process.env.TOKEN;
+  const { prisma } = getPrismaClient();
 
   if (!token) {
     throw new Error('Не задан токен');
@@ -39,8 +39,12 @@ const init = async () => {
 }
 
 init()
-  .then(async () => await prisma.$disconnect())
+  .then(async () => {
+    const { prisma } = getPrismaClient();
+    await prisma.$disconnect()
+  })
   .catch(async (e) => {
+    const { prisma } = getPrismaClient();
     console.log(e);
     await prisma.$disconnect();
     process.exit(1);

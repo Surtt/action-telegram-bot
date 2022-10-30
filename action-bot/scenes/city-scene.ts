@@ -1,9 +1,9 @@
 import {Scenes} from "telegraf";
 import {MyContext} from "../types";
-import { PrismaClient } from '@prisma/client';
+import {getPrismaClient} from "../helpers/get-prisma-client.js";
 
-const prisma = new PrismaClient();
 export const cityScene = () => {
+    const { prisma } = getPrismaClient();
     const scene = new Scenes.BaseScene<MyContext>('city');
     scene.enter(async (ctx) => {
         const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});

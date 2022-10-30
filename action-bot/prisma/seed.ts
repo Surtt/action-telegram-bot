@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import {getPrismaClient} from "../helpers/get-prisma-client.js";
 
 interface IUser {
   userId: number;
@@ -67,6 +65,7 @@ const actionFood: IAction = {
 };
 
 const main = async () => {
+  const { prisma } = getPrismaClient();
   await prisma.$connect();
   await prisma.user.create({ data: user });
   await prisma.action.create({ data: action });
