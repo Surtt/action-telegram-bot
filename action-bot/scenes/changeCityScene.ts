@@ -20,6 +20,7 @@ export const changeCityScene = () => {
             }
         });
         await ctx.reply('Город изменен');
+        await ctx.scene.leave();
     });
     return scene;
 }

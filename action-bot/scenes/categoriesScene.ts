@@ -8,16 +8,25 @@ const prisma = new PrismaClient();
 export const categoriesScene = () => {
     const scene = new Scenes.BaseScene<MyContext>('categories');
     scene.enter(async (ctx) => {
-        const buttons = ['Курсы', 'Одежда', 'Электроника', 'Продукты'];
+        const buttons = [
+            Markup.button.callback('Курсы', 'Курсы'),
+            Markup.button.callback('Одежда', 'Одежда'),
+            Markup.button.callback('Электроника', 'Электроника'),
+            Markup.button.callback('Продукты', 'Продукты')
+        ];
         const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
 
-        const filteredButtons = buttons.filter((button) => button && !user?.categories.includes(button));
-        await ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard(filteredButtons).oneTime().resize());
+        // const filteredButtons = buttons.filter((button) => button && !user?.categories.includes(button));
+        await ctx.reply('Выберите категории акций, которые вам интересны', Markup.inlineKeyboard(buttons));
     });
 
-    scene.hears('Курсы', getCategory);
-    scene.hears('Одежда', getCategory);
-    scene.hears('Электроника', getCategory);
-    scene.hears('Продукты', getCategory);
+    scene.action('1', (ctx) => {
+        console.log(ctx.callbackQuery.data);
+    });
+
+    scene.action('Курсы', getCategory);
+    scene.action('Одежда', getCategory);
+    scene.action('Электроника', getCategory);
+    scene.action('Продукты', getCategory);
     return scene;
 }

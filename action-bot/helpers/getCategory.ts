@@ -4,11 +4,18 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const getCategory = async (ctx: any) => {
-    const category = ctx.update.message.text;
+    const category = ctx.update.callback_query.data;
     const city = ctx.session.cityProp;
     const userCategories = await prisma.user.findUnique({ where: { userId: ctx.session.userProp}});
     const categories = userCategories?.categories;
-    await prisma.user.update({ where: { userId: ctx.session.userProp}, data: { categories: categories?.concat(category)}})
+    const getCategories = () => {
+        if (!categories?.includes(category)) {
+            return categories?.concat(category)
+        } else {
+            return;
+        }
+    }
+    await prisma.user.update({ where: { userId: ctx.session.userProp}, data: { categories: getCategories()}})
     const actions = await prisma.action.findMany({ where: { category, city }});
     return actions.map((action) => {
         ctx.replyWithHTML(
