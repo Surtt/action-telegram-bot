@@ -8,6 +8,7 @@ import { cityScene } from "./scenes/cityScene.js";
 import { categoriesScene } from "./scenes/categoriesScene.js";
 import { changeCityScene } from "./scenes/changeCityScene.js";
 import {settingsScene} from "./scenes/settings-scene.js";
+import {getUsersCategories} from "./scenes/get-users-categories.js";
 
 const prisma = new PrismaClient();
 const {leave, enter} = Scenes.Stage;
@@ -21,7 +22,7 @@ const init = async () => {
 
   const bot = new Telegraf<MyContext>(token);
 
-  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(), categoriesScene(), changeCityScene(), settingsScene()]);
+  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(), categoriesScene(), changeCityScene(), settingsScene(), getUsersCategories()]);
 
   bot.use(new LocalSession({database: 'session.json'}).middleware());
   bot.use(stage.middleware());
