@@ -10,11 +10,30 @@ export const getUsersCategories = () => {
         const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
         const buttons = user?.categories ? user?.categories.map((button) => {
             return Markup.button.callback(button, button);
-        }) : []
-        await ctx.reply('Нажмите на категорию, чтобы ее удалить', Markup.inlineKeyboard(buttons));
+        }) : [];
+        const isCategories = user?.categories.length ? 'Нажмите на категорию, чтобы ее удалить' : 'Вы не добавили ни одной категории /start'
+        await ctx.reply(isCategories, Markup.inlineKeyboard(buttons));
         user?.categories.forEach((category) => {
-            // prisma.user.delete({ where: { categories: }})
-            scene.action(category, (ctx) => ctx.reply(`Категория "${category}" удалена`));
+            scene.action(category, async (ctx) => {
+                const user = await prisma.user.findUnique({
+                    where: {
+                        userId: ctx.session.userProp
+                    },
+                    select: {
+                        categories: true,
+                }});
+                await prisma.user.update({
+                    where: {
+                        userId: ctx.session.userProp,
+                    },
+                    data: {
+                        categories: {
+                            set: user?.categories.filter((cat: string) => cat !== category)
+                        }
+                    }
+                })
+                ctx.reply(`Категория "${category}" удалена`)
+            });
         })
     });
     return scene;

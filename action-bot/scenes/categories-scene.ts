@@ -1,11 +1,10 @@
 import {Markup, Scenes} from "telegraf";
 import {MyContext} from "../types";
-import {getCategory} from "../helpers/getCategory.js";
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import {getCategory} from "../helpers/get-category.js";
+import {getPrismaClient} from "../helpers/get-prisma-client.js";
 
 export const categoriesScene = () => {
+    const { prisma } = getPrismaClient();
     const scene = new Scenes.BaseScene<MyContext>('categories');
     scene.enter(async (ctx) => {
         const buttons = [
@@ -18,10 +17,6 @@ export const categoriesScene = () => {
 
         // const filteredButtons = buttons.filter((button) => button && !user?.categories.includes(button));
         await ctx.reply('Выберите категории акций, которые вам интересны', Markup.inlineKeyboard(buttons));
-    });
-
-    scene.action('1', (ctx) => {
-        console.log(ctx.callbackQuery.data);
     });
 
     scene.action('Курсы', getCategory);

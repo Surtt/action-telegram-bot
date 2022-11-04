@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 export const getCategory = async (ctx: any) => {
     const category = ctx.update.callback_query.data;
     const city = ctx.session.cityProp;
-    const userCategories = await prisma.user.findUnique({ where: { userId: ctx.session.userProp}});
-    const categories = userCategories?.categories;
+    const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp}});
+    const categories = user?.categories;
     const getCategories = () => {
         if (!categories?.includes(category)) {
             return categories?.concat(category)
