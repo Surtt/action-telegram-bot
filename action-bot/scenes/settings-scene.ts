@@ -14,6 +14,7 @@ export const settingsScene = () => {
     });
 
     scene.action('Изменить город', (ctx) => ctx.scene.enter('changeCity'));
+    scene.action('Все категории', (ctx) => ctx.scene.enter('categories'));
     scene.action('Мои категории', (ctx) => ctx.scene.enter('getUsersCategories'));
 
 
