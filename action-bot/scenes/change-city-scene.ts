@@ -1,10 +1,10 @@
 import {Scenes} from "telegraf";
 import {MyContext} from "../types";
-import {getPrismaClient} from "../helpers/get-prisma-client.js";
+import {PrismaClient} from "@prisma/client";
+import {ScenesIds} from "./scenes-ids.js";
 
-export const changeCityScene = () => {
-    const { prisma } = getPrismaClient();
-    const scene = new Scenes.BaseScene<MyContext>('changeCity');
+export const changeCityScene = (prisma: PrismaClient) => {
+    const scene = new Scenes.BaseScene<MyContext>(ScenesIds.ChangeCity);
     scene.enter(async (ctx) => {
         await ctx.reply('Укажите, пожалуйста, новый город');
     });

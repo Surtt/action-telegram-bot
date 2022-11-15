@@ -1,9 +1,9 @@
 import {Markup, Scenes} from "telegraf";
 import {MyContext} from "../types";
-
+import {ScenesIds} from "./scenes-ids.js";
 
 export const settingsScene = () => {
-    const scene = new Scenes.BaseScene<MyContext>('settings');
+    const scene = new Scenes.BaseScene<MyContext>(ScenesIds.Settings);
     scene.enter(async (ctx) => {
         const buttons = [
             Markup.button.callback('Изменить город', 'Изменить город'),

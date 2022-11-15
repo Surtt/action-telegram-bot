@@ -1,9 +1,10 @@
 import {Markup, Scenes} from "telegraf";
 import {MyContext} from "../types";
 import {getCategory} from "../helpers/get-category.js";
+import {ScenesIds} from "./scenes-ids.js";
 
 export const categoriesScene = () => {
-    const scene = new Scenes.BaseScene<MyContext>('categories');
+    const scene = new Scenes.BaseScene<MyContext>(ScenesIds.Categories);
     scene.enter(async (ctx) => {
         const buttons = [
             Markup.button.callback('Курсы', 'Курсы'),

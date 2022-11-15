@@ -1,13 +1,19 @@
 import {Markup, Scenes} from "telegraf";
 import {MyContext} from "../types";
-import { PrismaClient } from '@prisma/client';
+import {PrismaClient} from "@prisma/client";
+import {ScenesIds} from "./scenes-ids.js";
 
-const prisma = new PrismaClient();
 
-export const getUsersCategories = () => {
-    const scene = new Scenes.BaseScene<MyContext>('getUsersCategories');
+export const getUsersCategories = (prisma: PrismaClient) => {
+    const scene = new Scenes.BaseScene<MyContext>(ScenesIds.GetUsersCategories);
     scene.enter(async (ctx) => {
-        const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
+        const user = await prisma.user.findUnique({
+            where: {
+                userId: ctx.session.userProp
+            },
+            select: {
+                categories: true,
+            }});
         const buttons = user?.categories ? user?.categories.map((button) => {
             return Markup.button.callback(button, button);
         }) : [];
@@ -15,13 +21,7 @@ export const getUsersCategories = () => {
         await ctx.reply(isCategories, Markup.inlineKeyboard(buttons));
         user?.categories.forEach((category) => {
             scene.action(category, async (ctx) => {
-                const user = await prisma.user.findUnique({
-                    where: {
-                        userId: ctx.session.userProp
-                    },
-                    select: {
-                        categories: true,
-                }});
+
                 await prisma.user.update({
                     where: {
                         userId: ctx.session.userProp,
