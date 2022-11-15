@@ -22,7 +22,7 @@ const init = async () => {
 
   const bot = new Telegraf<MyContext>(token);
 
-  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(prisma), categoriesScene(), changeCityScene(prisma), settingsScene(), getUsersCategories(prisma)]);
+  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(prisma), categoriesScene(prisma), changeCityScene(prisma), settingsScene(), getUsersCategories(prisma)]);
 
   bot.use(new LocalSession({database: 'session.json'}).middleware());
   bot.use(stage.middleware());

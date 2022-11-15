@@ -13,7 +13,6 @@ model User {
   name       String
   city       String
   categories String[]
-  actions    Action[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -29,13 +28,9 @@ model Action {
   category  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
 }
 
-
-// TODO сделать связь категории и акции
-//model Category {
-//  id        Int      @id @default(autoincrement())
-//  name      String
-//}
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+}

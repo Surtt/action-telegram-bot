@@ -64,10 +64,26 @@ const actionFood: IAction = {
   category: 'Продукты',
 };
 
+const categories = [
+  {
+    name: 'Курсы',
+  },
+  {
+    name: 'Одежда',
+  },
+  {
+    name: 'Электроника',
+  },
+  {
+    name: 'Продукты',
+  },
+];
+
 const main = async () => {
   const { prisma } = getPrismaClient();
   await prisma.$connect();
   await prisma.user.create({ data: user });
+  await prisma.category.createMany({ data: categories});
   await prisma.action.create({ data: action });
   await prisma.action.create({ data: actionClothes });
   await prisma.action.create({ data: actionElectronics });

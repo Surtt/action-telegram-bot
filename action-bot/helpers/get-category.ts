@@ -17,7 +17,7 @@ export const getCategory = async (ctx: any) => {
     }
     await prisma.user.update({ where: { userId: ctx.session.userProp}, data: { categories: getCategories()}})
     const actions = await prisma.action.findMany({ where: { category, city }});
-    return actions.map((action) => {
+    return !actions.length  ? ctx.reply(`Акции категории "${category}" в вашем городе не найдено`) : actions.map((action) => {
         ctx.replyWithHTML(
             dedent`
           <b>📚 Название:</b> ${action.title}

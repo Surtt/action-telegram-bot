@@ -12,6 +12,7 @@ export const changeCityScene = (prisma: PrismaClient) => {
     scene.on('text', async (ctx) => {
         const city = ctx.message.text;
         const userId = ctx.from.id;
+        ctx.session.cityProp = city;
         await prisma.user.update({
             where: { userId },
             data: {
