@@ -1,17 +1,20 @@
 import 'dotenv/config';
-import {Markup, Scenes, Telegraf, Context } from "telegraf";
+import { Scenes, Telegraf } from "telegraf";
 import LocalSession from 'telegraf-session-local';
-import {MyContext} from "./types";
-import {greeterScene} from "./scenes/greeter-scene.js";
-import {cityScene} from "./scenes/city-scene.js";
-import {categoriesScene} from "./scenes/categories-scene.js";
-import {getPrismaClient} from "./helpers/get-prisma-client.js";
+import { MyContext } from "./types";
+import { greeterScene } from "./scenes/greeter-scene.js";
+import { cityScene } from "./scenes/city-scene.js";
+import { categoriesScene } from "./scenes/categories-scene.js";
+import { changeCityScene } from "./scenes/change-city-scene.js";
+import { settingsScene } from "./scenes/settings-scene.js";
+import { getUsersCategories } from "./scenes/get-users-categories.js";
+import { PrismaClient } from '@prisma/client';
 
-const {leave, enter} = Scenes.Stage;
+const prisma = new PrismaClient();
 
 const init = async () => {
+  await prisma.$connect();
   const token = process.env.TOKEN;
-  const { prisma } = getPrismaClient();
 
   if (!token) {
     throw new Error('Не задан токен');
@@ -19,7 +22,7 @@ const init = async () => {
 
   const bot = new Telegraf<MyContext>(token);
 
-  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(), categoriesScene()]);
+  const stage = new Scenes.Stage<MyContext>([greeterScene(), cityScene(prisma), categoriesScene(prisma), changeCityScene(prisma), settingsScene(), getUsersCategories(prisma)]);
 
   bot.use(new LocalSession({database: 'session.json'}).middleware());
   bot.use(stage.middleware());
@@ -30,21 +33,25 @@ const init = async () => {
     ctx.scene.session.mySceneSessionProp ??= '';
     return next();
   });
-  bot.command("start", ctx => ctx.scene.enter("greeter"));
-  bot.command("city", ctx => ctx.scene.enter("city"));
+  bot.command("start", (ctx) => ctx.scene.enter("greeter"));
+  bot.command("city", (ctx) => ctx.scene.enter("changeCity"));
+  bot.command('settings', (ctx) => ctx.scene.enter('settings'));
+  await bot.telegram.setMyCommands([
+    { command: '/start', description: 'Начать диалог' },
+    { command: '/city', description: 'Изменить город' },
+    { command: '/settings', description: 'Открыть настройки' },
+  ]);
+
   bot.on("message", ctx => ctx.reply("Такой команды нет, попробуй /start"));
 
-  bot.launch();
-  await prisma.$connect();
+  await bot.launch();
 }
 
 init()
   .then(async () => {
-    const { prisma } = getPrismaClient();
     await prisma.$disconnect()
   })
   .catch(async (e) => {
-    const { prisma } = getPrismaClient();
     console.log(e);
     await prisma.$disconnect();
     process.exit(1);

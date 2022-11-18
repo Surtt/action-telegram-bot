@@ -1,22 +1,21 @@
 import {Markup, Scenes} from "telegraf";
 import {MyContext} from "../types";
 import {getCategory} from "../helpers/get-category.js";
-import {getPrismaClient} from "../helpers/get-prisma-client.js";
+import {ScenesIds} from "./scenes-ids.js";
+import {PrismaClient} from "@prisma/client";
 
-export const categoriesScene = () => {
-    const { prisma } = getPrismaClient();
-    const scene = new Scenes.BaseScene<MyContext>('categories');
+export const categoriesScene = (prisma: PrismaClient) => {
+    const scene = new Scenes.BaseScene<MyContext>(ScenesIds.Categories);
+    const getCategories = async () => await prisma.category.findMany();
     scene.enter(async (ctx) => {
-        const buttons = ['Курсы', 'Одежда', 'Электроника', 'Продукты'];
-        const user = await prisma.user.findUnique({ where: { userId: ctx.session.userProp }});
+        const categories = await getCategories();
+        const buttons = categories
+            .map((category) => Markup.button.callback(category.name, category.name));
 
-        const filteredButtons = buttons.filter((button) => button && !user?.categories.includes(button));
-        await ctx.reply('Выберите категории акций, которые вам интересны', Markup.keyboard(filteredButtons).oneTime().resize());
+        await ctx.reply('Выберите категории акций, которые вам интересны', Markup.inlineKeyboard(buttons));
+
+        categories.forEach((category) => scene.action(category.name, getCategory))
     });
 
-    scene.hears('Курсы', getCategory);
-    scene.hears('Одежда', getCategory);
-    scene.hears('Электроника', getCategory);
-    scene.hears('Продукты', getCategory);
     return scene;
 }

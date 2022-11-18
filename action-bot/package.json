@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@prisma/client": "^4.5.0",
+    "@prisma/client": "^4.6.1",
     "dedent-js": "^1.0.1",
     "dotenv": "^16.0.3",
     "telegraf": "^4.10.0",
@@ -26,6 +26,6 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^18.8.3",
-    "prisma": "^4.5.0"
+    "prisma": "^4.6.1"
   }
 }

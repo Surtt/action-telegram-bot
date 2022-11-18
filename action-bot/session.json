@@ -1,0 +1,16 @@
+{
+  "sessions": [
+    {
+      "id": "344268972:344268972",
+      "data": {
+        "__scenes": {
+          "current": "getUsersCategories",
+          "state": {}
+        },
+        "mySessionProp": "Химки",
+        "cityProp": "Москва",
+        "userProp": 344268972
+      }
+    }
+  ]
+}
