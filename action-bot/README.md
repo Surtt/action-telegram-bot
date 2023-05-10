@@ -1,9 +1,9 @@
-# Чат-бот акционных предложений
+# Action Telegram Bot
 
-### Запуск
+### Run
 ```npm ci && npm start```
 
-### Переменные окружения
+### Environment variables
 ```TOKEN=```
 
 ```DATABASE_URL=```
